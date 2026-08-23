@@ -1,32 +1,32 @@
 # Spring RAG Assistant
 
-Spring Boot ile geliştirilen basit ve anlaşılır bir **RAG (Retrieval-Augmented Generation) doküman asistanı**.
+A simple, easy-to-understand **RAG (Retrieval-Augmented Generation) document assistant** built with Spring Boot.
 
-Kullanıcı PDF yükler → metin çıkarılır → chunk'lara ayrılır → her chunk için embedding üretilir → PostgreSQL + pgvector içinde saklanır. Kullanıcı soru sorduğunda sorunun embedding'i oluşturulur, vector similarity search ile en alakalı chunk'lar bulunur ve LLM'e context olarak verilir.
+The user uploads a PDF → text is extracted → split into chunks → an embedding is generated for each chunk → stored in PostgreSQL + pgvector. When the user asks a question, the question's embedding is generated, the most relevant chunks are found via vector similarity search, and provided to the LLM as context.
 
-## Teknolojiler
+## Technologies
 
-| Katman | Teknoloji |
+| Layer | Technology |
 |---|---|
-| Dil / Framework | Java 17, Spring Boot 3.5 |
+| Language / Framework | Java 17, Spring Boot 3.5 |
 | Web / Data | Spring Web, Spring Data JPA, Validation |
-| Veritabanı | PostgreSQL 16 + pgvector |
+| Database | PostgreSQL 16 + pgvector |
 | PDF | Apache PDFBox 3 |
-| AI | OpenAI (planlanan) — şimdilik mock embedding |
-| Altyapı | Docker Compose, Maven Wrapper |
+| AI | OpenAI (planned) — mock embedding for now |
+| Infrastructure | Docker Compose, Maven Wrapper |
 
-## Mimari
+## Architecture
 
 ```text
-webApi/controllers        → REST endpoint'ler
-business/abstracts        → Service interface'leri
-business/concretes        → Service implementasyonları (Manager)
-business/requests         → Request DTO'ları
-business/responses        → Response DTO'ları
-business/rules            → Business validation kuralları
+webApi/controllers        → REST endpoints
+business/abstracts        → Service interfaces
+business/concretes        → Service implementations (Managers)
+business/requests         → Request DTOs
+business/responses        → Response DTOs
+business/rules            → Business validation rules
 core/                     → Global exception handling, config
-dataAccess/abstracts      → Repository interface'leri
-entities/concretes        → Entity modelleri
+dataAccess/abstracts      → Repository interfaces
+entities/concretes        → Entity models
 ```
 
 Pipeline:
@@ -37,23 +37,23 @@ DOCUMENT → TEXT → CHUNKS → EMBEDDINGS → VECTOR DB → RETRIEVAL → CONT
 
 ## API
 
-| Method | Endpoint | Açıklama |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/health` | Servis durumu |
-| POST | `/api/documents` | PDF yükleme (`multipart/form-data`, field: `file`) |
-| POST | `/api/chat` | Soru sorma (`application/json`) |
+| GET | `/api/health` | Service status |
+| POST | `/api/documents` | PDF upload (`multipart/form-data`, field: `file`) |
+| POST | `/api/chat` | Ask a question (`application/json`) |
 
-### Örnekler
+### Examples
 
 ```bash
-# PDF yükleme
+# Upload a PDF
 curl -X POST http://localhost:8080/api/documents \
-  -F "file=@dokuman.pdf;type=application/pdf"
+  -F "file=@document.pdf;type=application/pdf"
 
-# Soru sorma
+# Ask a question
 curl -X POST http://localhost:8080/api/chat \
   -H "Content-Type: application/json" \
-  -d '{"question": "Yillik izin kac gundur?"}'
+  -d '{"question": "How many annual leave days do I have?"}'
 ```
 
 Upload response:
@@ -61,7 +61,7 @@ Upload response:
 ```json
 {
   "message": "Document processed successfully",
-  "documentName": "dokuman.pdf",
+  "documentName": "document.pdf",
   "chunks": 18
 }
 ```
@@ -70,30 +70,30 @@ Chat response:
 
 ```json
 {
-  "answer": "Dokümana göre yıllık izin süresi 14 gündür."
+  "answer": "According to the document, the annual leave period is 14 days."
 }
 ```
 
-## Kurulum ve Çalıştırma
+## Setup and Running
 
-### Gereksinimler
+### Requirements
 
 - Java 17+
-- Docker (PostgreSQL/pgvector için)
+- Docker (for PostgreSQL/pgvector)
 
-### Adımlar
+### Steps
 
-1. PostgreSQL + pgvector'ı başlat:
+1. Start PostgreSQL + pgvector:
 
    ```bash
    docker compose up -d
    ```
 
-2. `src/main/resources/application.yml` içinde:
-   - `datasource` bloğundaki yorumları kaldır
-   - `spring.autoconfigure.exclude` bloğunu sil
+2. In `src/main/resources/application.yml`:
+   - Uncomment the `datasource` block
+   - Remove the `spring.autoconfigure.exclude` block
 
-3. Uygulamayı başlat:
+3. Start the application:
 
    ```bash
    ./mvnw spring-boot:run        # Linux/macOS
@@ -102,33 +102,33 @@ Chat response:
 
 ### Environment Variables
 
-OpenAI entegrasyonu aktifleştiğinde:
+When the OpenAI integration is enabled:
 
 ```bash
 OPENAI_API_KEY=your_key_here
 ```
 
-`.env.example` dosyasını `.env` olarak kopyalayıp kullanabilirsiniz. Gerçek key asla repoya commit edilmez.
+You can copy `.env.example` to `.env` and use it. Never commit a real key to the repository.
 
-## Testler
+## Tests
 
 ```bash
 ./mvnw test                    # Linux/macOS
 .\mvnw.cmd test                # Windows
 ```
 
-## Durum
+## Status
 
-- [x] Phase 1 — Spring Boot kurulumu, health endpoint
-- [x] Phase 2 — Entity + pgvector repository (DB bağlantısı son adımda aktive edilecek)
+- [x] Phase 1 — Spring Boot setup, health endpoint
+- [x] Phase 2 — Entity + pgvector repository (DB connection will be activated in the final step)
 - [x] Phase 3 — PDF upload + text extraction
-- [x] Phase 4 — Chunking (700 karakter / 100 overlap)
-- [x] Phase 5 — Embedding (mock; OpenAI key gelince gerçek modele geçecek)
+- [x] Phase 4 — Chunking (700 characters / 100 overlap)
+- [x] Phase 5 — Embedding (mock; will switch to a real model once the OpenAI key is available)
 - [x] Phase 6 — Vector similarity search (top 3)
-- [x] Phase 7 — RAG akışı (mock LLM cevabı)
-- [ ] Son entegrasyon testi (Docker + gerçek DB ile uçtan uca)
+- [x] Phase 7 — RAG flow (mock LLM answer)
+- [ ] Final integration test (end-to-end with Docker + real DB)
 
-## Notlar
+## Notes
 
-- `EmbeddingManager` şu an **deterministik mock** üretir; `OPENAI_API_KEY` geldiğinde gerçek embedding modeliyle değiştirilecektir.
-- `RagManager` içindeki `generateAnswer` şimdilik retrieval sonucunu döner; LLM entegrasyonuyla dokümana dayalı gerçek cevap üretilecektir.
+- `EmbeddingManager` currently produces a **deterministic mock**; it will be replaced with a real embedding model once `OPENAI_API_KEY` is available.
+- `generateAnswer` inside `RagManager` currently returns the retrieval result; with LLM integration it will produce real document-based answers.
