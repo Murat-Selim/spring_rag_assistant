@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: spring-rag-assistant
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # PostgreSQL: docker compose up -d calistirildiginda asagidaki blok acilacak
+  # ve autoconfigure.exclude kaldirilacak
+  #datasource:
+  #  url: jdbc:postgresql://localhost:5432/ragdb
+  #  username: raguser
+  #  password: ragpassword
+  #jpa:
+  #  hibernate:
+  #    ddl-auto: validate
+  #  properties:
+  #    hibernate:
+  #      format_sql: true
+
+  # Docker kurulana kadar JPA auto-configuration kapali
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration

@@ -1,0 +1,9 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE IF NOT EXISTS document_chunks (
+    id BIGSERIAL PRIMARY KEY,
+    document_name VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    embedding VECTOR(1536),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
