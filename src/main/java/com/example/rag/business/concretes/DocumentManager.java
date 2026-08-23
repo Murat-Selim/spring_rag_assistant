@@ -15,6 +15,7 @@ import com.example.rag.business.abstracts.EmbeddingService;
 import com.example.rag.business.responses.documentResponse.DocumentUploadResponse;
 import com.example.rag.business.rules.DocumentBusinessRules;
 import com.example.rag.dataAccess.abstracts.DocumentChunkRepository;
+import com.example.rag.entities.concretes.DocumentChunk;
 
 @Service
 public class DocumentManager implements DocumentService {
@@ -44,7 +45,9 @@ public class DocumentManager implements DocumentService {
         List<String> chunks = chunkingService.chunk(text);
 
         for (String chunk : chunks) {
-            repository.insertChunk(file.getOriginalFilename(), chunk, embeddingService.embed(chunk));
+            DocumentChunk entity = new DocumentChunk(file.getOriginalFilename(), chunk);
+            entity.setEmbedding(embeddingService.embed(chunk));
+            repository.save(entity);
         }
 
         return new DocumentUploadResponse(
