@@ -6,8 +6,11 @@ import java.util.List;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import lombok.RequiredArgsConstructor;
 
 import com.example.rag.business.abstracts.ChunkingService;
 import com.example.rag.business.abstracts.DocumentService;
@@ -15,9 +18,9 @@ import com.example.rag.business.abstracts.EmbeddingService;
 import com.example.rag.business.responses.documentResponse.DocumentUploadResponse;
 import com.example.rag.business.rules.DocumentBusinessRules;
 import com.example.rag.dataAccess.abstracts.DocumentChunkRepository;
-import com.example.rag.entities.concretes.DocumentChunk;
 
 @Service
+@RequiredArgsConstructor
 public class DocumentManager implements DocumentService {
 
     private final DocumentBusinessRules rules;
@@ -25,17 +28,8 @@ public class DocumentManager implements DocumentService {
     private final EmbeddingService embeddingService;
     private final DocumentChunkRepository repository;
 
-    public DocumentManager(DocumentBusinessRules rules,
-                           ChunkingService chunkingService,
-                           EmbeddingService embeddingService,
-                           DocumentChunkRepository repository) {
-        this.rules = rules;
-        this.chunkingService = chunkingService;
-        this.embeddingService = embeddingService;
-        this.repository = repository;
-    }
-
     @Override
+    @Transactional
     public DocumentUploadResponse upload(MultipartFile file) {
         rules.fileMustBeValid(file);
 
@@ -45,9 +39,7 @@ public class DocumentManager implements DocumentService {
         List<String> chunks = chunkingService.chunk(text);
 
         for (String chunk : chunks) {
-            DocumentChunk entity = new DocumentChunk(file.getOriginalFilename(), chunk);
-            entity.setEmbedding(embeddingService.embed(chunk));
-            repository.save(entity);
+            repository.insertChunk(file.getOriginalFilename(), chunk, embeddingService.embed(chunk));
         }
 
         return new DocumentUploadResponse(

@@ -3,6 +3,9 @@ package com.example.rag.entities.concretes;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,9 +13,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "document_chunks")
+@Getter
+@Setter
+@NoArgsConstructor
 public class DocumentChunk {
 
     @Id
@@ -25,52 +32,17 @@ public class DocumentChunk {
     @Column(nullable = false, columnDefinition = "text")
     private String content;
 
-    // pgvector kolonu; insert islemi repository uzerinden CAST ile yapilir
-    @Column(name = "embedding", columnDefinition = "vector(1536)")
+    // pgvector, native repository sorgularinda CAST edilerek yazilir/okunur.
+    @Transient
     private String embedding;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public DocumentChunk() {
-    }
-
     public DocumentChunk(String documentName, String content) {
         this.documentName = documentName;
         this.content = content;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDocumentName() {
-        return documentName;
-    }
-
-    public void setDocumentName(String documentName) {
-        this.documentName = documentName;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getEmbedding() {
-        return embedding;
-    }
-
-    public void setEmbedding(String embedding) {
-        this.embedding = embedding;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 
 }

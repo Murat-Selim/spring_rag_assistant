@@ -9,20 +9,23 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 import com.example.rag.business.abstracts.DocumentService;
 import com.example.rag.business.responses.documentResponse.DocumentUploadResponse;
 
 @RestController
 @RequestMapping("/api/documents")
+@RequiredArgsConstructor
+@Tag(name = "Documents", description = "PDF document management")
 public class DocumentsController {
 
     private final DocumentService documentService;
 
-    public DocumentsController(DocumentService documentService) {
-        this.documentService = documentService;
-    }
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload a PDF", description = "Extracts, chunks and embeds a PDF document")
     public ResponseEntity<DocumentUploadResponse> upload(@RequestPart("file") MultipartFile file) {
         return ResponseEntity.status(HttpStatus.CREATED).body(documentService.upload(file));
     }

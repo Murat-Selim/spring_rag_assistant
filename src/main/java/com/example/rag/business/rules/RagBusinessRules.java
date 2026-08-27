@@ -10,12 +10,6 @@ import com.example.rag.dataAccess.abstracts.DocumentChunkRepository;
 @Component
 public class RagBusinessRules {
 
-    private final DocumentChunkRepository repository;
-
-    public RagBusinessRules(DocumentChunkRepository repository) {
-        this.repository = repository;
-    }
-
     public void questionMustBeValid(String question) {
         if (question == null || question.isBlank()) {
             throw new BusinessException("Question must not be blank.");

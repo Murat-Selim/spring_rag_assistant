@@ -43,6 +43,10 @@ DOCUMENT → TEXT → CHUNKS → EMBEDDINGS → VECTOR DB → RETRIEVAL → CONT
 | POST | `/api/documents` | PDF upload (`multipart/form-data`, field: `file`) |
 | POST | `/api/chat` | Ask a question (`application/json`) |
 
+Swagger UI: `http://localhost:8080/swagger-ui.html`
+
+OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
 ### Examples
 
 ```bash
@@ -89,11 +93,7 @@ Chat response:
    docker compose up -d
    ```
 
-2. In `src/main/resources/application.yml`:
-   - Uncomment the `datasource` block
-   - Remove the `spring.autoconfigure.exclude` block
-
-3. Start the application:
+2. Start the application:
 
    ```bash
    ./mvnw spring-boot:run        # Linux/macOS
@@ -102,13 +102,11 @@ Chat response:
 
 ### Environment Variables
 
-When the OpenAI integration is enabled:
-
 ```bash
 OPENAI_API_KEY=your_key_here
 ```
 
-You can copy `.env.example` to `.env` and use it. Never commit a real key to the repository.
+Never commit a real key to the repository.
 
 ## Tests
 

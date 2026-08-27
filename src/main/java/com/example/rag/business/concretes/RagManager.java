@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 import com.example.rag.business.abstracts.EmbeddingService;
 import com.example.rag.business.abstracts.RagService;
 import com.example.rag.business.requests.chatRequest.ChatRequest;
@@ -12,6 +14,7 @@ import com.example.rag.business.rules.RagBusinessRules;
 import com.example.rag.dataAccess.abstracts.DocumentChunkRepository;
 
 @Service
+@RequiredArgsConstructor
 public class RagManager implements RagService {
 
     private static final int TOP_K = 3;
@@ -19,14 +22,6 @@ public class RagManager implements RagService {
     private final EmbeddingService embeddingService;
     private final RagBusinessRules rules;
     private final DocumentChunkRepository repository;
-
-    public RagManager(EmbeddingService embeddingService,
-                      RagBusinessRules rules,
-                      DocumentChunkRepository repository) {
-        this.embeddingService = embeddingService;
-        this.rules = rules;
-        this.repository = repository;
-    }
 
     @Override
     public ChatResponse ask(ChatRequest request) {
