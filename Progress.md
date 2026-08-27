@@ -512,10 +512,10 @@ Overlap: 100
 
 ## Phase 9 — API Documentation
 
-- [ ] SpringDoc OpenAPI ekle
-- [ ] Swagger UI aktif et
-- [ ] `/api/documents` dokümante et
-- [ ] `/api/chat` dokümante et
+- [x] SpringDoc OpenAPI ekle
+- [x] Swagger UI aktif et
+- [x] `/api/documents` dokümante et
+- [x] `/api/chat` dokümante et
 
 ## Phase 10 — Testing
 
@@ -548,7 +548,7 @@ Overlap: 100
 - [ ] Request / Response DTO ayrımı uygulanmış
 - [ ] Controller -> Service -> Manager -> Repository akışı korunmuş
 - [ ] Global exception handling mevcut
-- [ ] Swagger ile endpoint'ler test edilebiliyor
+- [x] Swagger ile endpoint'ler test edilebiliyor
 
 ---
 

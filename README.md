@@ -124,6 +124,7 @@ Never commit a real key to the repository.
 - [x] Phase 5 — Embedding (mock; will switch to a real model once the OpenAI key is available)
 - [x] Phase 6 — Vector similarity search (top 3)
 - [x] Phase 7 — RAG flow (mock LLM answer)
+- [x] Swagger/OpenAPI integration
 - [ ] Final integration test (end-to-end with Docker + real DB)
 
 ## Notes
